@@ -32,6 +32,7 @@ let make = (~client, ~latestTodoId) => {
       },
       {"todos": [||], "loading": true},
     );
+
   let fetchOlderTodos = () => {
     let existingTodoLength = Array.length(state##todos);
     let lastTodoId =
@@ -95,12 +96,28 @@ let make = (~client, ~latestTodoId) => {
     } else {
       0;
     };
-
+  let fetchNewerTodos = () => {
+    let fetchNewerTodosQuery =
+      GraphQLQueries.GetNewPublicTodos.make(~latestVisibleId, ());
+    let query = {
+      "query": ApolloClient.gql(. fetchNewerTodosQuery##query),
+      "variables": fetchNewerTodosQuery##variables,
+    };
+    let apolloData = client##query(query);
+    apolloData
+    |> Js.Promise.then_(gqlResp => {
+         let resp = toApolloResult(gqlResp);
+         let newTodos = Array.append(resp##data##todos, state##todos);
+         dispatch(SetTodos(newTodos));
+         Js.Promise.resolve();
+       })
+    |> ignore;
+  };
   let shouldShowNewTodosBanner = latestVisibleId < latestTodoId;
 
   let newTodosBanner =
     if (shouldShowNewTodosBanner) {
-      <div className="loadMoreSection">
+      <div className="loadMoreSection" onClick={_ => fetchNewerTodos()}>
         {ReasonReact.string("New tasks have arrived!")}
       </div>;
     } else {
