@@ -103,6 +103,7 @@ module GetPublicTodos = [%graphql
 ];
 
 // // GraphQL query to public todos older than a particular id
+//  this query doesnt have a implementation module, ie ReasonApollo.CreateQuery because we are not using it with React-Apollo. We using Apollo Consumer/or using the graphql client directly. Just to get the data, no Query component.
 module GetOlderTodos = [%graphql
   {|
     query ($lastId: Int) {
@@ -124,17 +125,17 @@ module GetOlderTodos = [%graphql
   |}
 ];
 
-// module NotifyNewPublicTodos = [%graphql
-//   {|
-//     subscription notifyNewPublicTodos {
-//       todos (where: { is_public: { _eq: true}}, limit: 1, order_by: {id: desc }) {
-//         id
-//       }
-//     }
-//   |}
-// ];
+module NotifyNewPublicTodos = [%graphql
+  {|
+    subscription notifyNewPublicTodos {
+      todos (where: { is_public: { _eq: true}}, limit: 1, order_by: {id: desc }) {
+        id
+      }
+    }
+  |}
+];
 
-// module NotifyNewPublicTodosSubscription = ReasonApollo.CreateSubscription(NotifyNewPublicTodos);
+module NotifyNewPublicTodosSubscription = ReasonApollo.CreateSubscription(NotifyNewPublicTodos);
 
 // module GetNewPublicTodos = [%graphql
 //   {|

@@ -23,7 +23,7 @@ external toApolloResult: 'a => response = "%identity";
 type action =
   | SetTodos(array(todoType));
 [@react.component]
-let make = (~client) => {
+let make = (~client, ~latestTodoId) => {
   let (state, dispatch) =
     React.useReducer(
       (_, action) => {
@@ -87,11 +87,25 @@ let make = (~client) => {
         />,
       state##todos,
     );
-  let newTodosBanner = {
-    <div className="loadMoreSection">
-      {ReasonReact.string("New tasks have arrived!")}
-    </div>;
-  };
+  let existingTodoLength = Array.length(state##todos);
+
+  let latestVisibleId =
+    if (existingTodoLength > 0) {
+      state##todos[0]##id;
+    } else {
+      0;
+    };
+
+  let shouldShowNewTodosBanner = latestVisibleId < latestTodoId;
+
+  let newTodosBanner =
+    if (shouldShowNewTodosBanner) {
+      <div className="loadMoreSection">
+        {ReasonReact.string("New tasks have arrived!")}
+      </div>;
+    } else {
+      ReasonReact.null;
+    };
 
   let oldTodosButton = {
     <div className="loadMoreSection" onClick={_ => fetchOlderTodos()}>
