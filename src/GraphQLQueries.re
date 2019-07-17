@@ -87,42 +87,42 @@ module UpdateLastSeen = [%graphql
 ];
 
 // // GraphQL query to fetch public todos
-// module GetPublicTodos = [%graphql
-//   {|
-//      query getPublicTodos {
-//        todos(where: { is_public: { _eq: true } }, order_by: { id: desc }, limit: 10) {
-//         id
-//          title
-//          created_at
-//          user {
-//            name
-//          }
-//        }
-//      }
-//   |}
-// ];
+module GetPublicTodos = [%graphql
+  {|
+     query getPublicTodos {
+       todos(where: { is_public: { _eq: true } }, order_by: { id: desc }, limit: 10) {
+        id
+         title
+         created_at
+         user {
+           name
+         }
+       }
+     }
+  |}
+];
 
 // // GraphQL query to public todos older than a particular id
-// module GetOlderTodos = [%graphql
-//   {|
-//     query ($lastId: Int) {
-//       todos (
-//         order_by: {
-//          created_at: desc
-//         },
-//         where: { id: { _lt: $lastId} },
-//         limit: 10
-//       ) {
-//         id
-//         title
-//         created_at
-//         user {
-//           name
-//         }
-//       }
-//     }
-//   |}
-// ];
+module GetOlderTodos = [%graphql
+  {|
+    query ($lastId: Int) {
+      todos (
+        order_by: {
+         created_at: desc
+        },
+        where: { id: { _lt: $lastId} },
+        limit: 10
+      ) {
+        id
+        title
+        created_at
+        user {
+          name
+        }
+      }
+    }
+  |}
+];
 
 // module NotifyNewPublicTodos = [%graphql
 //   {|
