@@ -51,7 +51,6 @@ let make = () => {
             filterFunc=filterTodos
           />
         </React.Fragment>;
-      | _ => ReasonReact.null
       }
     }
   </GraphQLQueries.GetMyTodosQuery>;

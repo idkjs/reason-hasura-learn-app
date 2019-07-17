@@ -1,30 +1,40 @@
-let sampleUsers = [|
-  {
-    "id": 1,
-    "name": "User 1"
-  },
-  {
-    "id": 2,
-    "name": "User 2"
-  },
-  {
-    "id": 3,
-    "name": "User 3"
-  },
-  {
-    "id": 4,
-    "name": "User 4"
-  },
-|];
-
 [@react.component]
-let make = () => {
-  let onlineUsers = Array.map(u => <UserItem user={u}/>, sampleUsers);
-  let onlineUsersTitle = "Online users - " ++ string_of_int(Array.length(sampleUsers));
-  <div className="onlineUsersWrapper">
-    <div className="sliderHeader">
-      {ReasonReact.string(onlineUsersTitle)}
-    </div>
-    {ReasonReact.array(onlineUsers)}
-  </div>
-}
+let make = (~client) => {
+  let updateMyLastSeen = () => {
+    let updateLastSeenMutation = GraphQLQueries.UpdateLastSeen.make();
+    let mutation = {
+      "mutation": ApolloClient.gql(. updateLastSeenMutation##query),
+      "variables": updateLastSeenMutation##variables,
+    };
+    client##mutate(mutation);
+    ();
+  };
+  React.useEffect0(() => {
+    let timerId = Js.Global.setInterval(updateMyLastSeen, 5000);
+    Some(() => Js.Global.clearInterval(timerId));
+  });
+  <GraphQLQueries.GetOnlineUsersSubscription>
+    ...{({result}) =>
+      switch (result) {
+      | Loading => <div> {ReasonReact.string("Loading")} </div>
+      | Error(error) =>
+        Js.log(error);
+        <div> {ReasonReact.string("Error")} </div>;
+      | Data(data) =>
+
+        let online_users = data##online_users->Belt.Array.keepMap(x => x##user);
+        let onlineUsers = Array.map(u => <UserItem user=u />, online_users);
+
+        let onlineUsersTitle =
+          "Online users - "
+          ++ string_of_int(Array.length(data##online_users));
+        <div className="onlineUsersWrapper">
+          <div className="sliderHeader">
+            {ReasonReact.string(onlineUsersTitle)}
+          </div>
+        </div>;
+      {ReasonReact.array(onlineUsers)}
+      }
+    }
+  </GraphQLQueries.GetOnlineUsersSubscription>;
+};
