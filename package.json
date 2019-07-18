@@ -1,5 +1,5 @@
 {
-  "name": "todo-graphql",
+  "name": "reason-hasura-learn-app",
   "version": "0.1.0",
   "scripts": {
     "build": "bsb -make-world",
