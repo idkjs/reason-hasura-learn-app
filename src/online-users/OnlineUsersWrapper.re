@@ -21,8 +21,8 @@ let make = (~client) => {
         Js.log(error);
         <div> {ReasonReact.string("Error")} </div>;
       | Data(data) =>
-
-        let online_users = data##online_users->Belt.Array.keepMap(x => x##user);
+        let online_users =
+          data##online_users->Belt.Array.keepMap(x => x##user);
         let onlineUsers = Array.map(u => <UserItem user=u />, online_users);
 
         let onlineUsersTitle =
@@ -32,8 +32,8 @@ let make = (~client) => {
           <div className="sliderHeader">
             {ReasonReact.string(onlineUsersTitle)}
           </div>
+          {ReasonReact.array(onlineUsers)}
         </div>;
-      {ReasonReact.array(onlineUsers)}
       }
     }
   </GraphQLQueries.GetOnlineUsersSubscription>;
