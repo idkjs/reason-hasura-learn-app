@@ -21,10 +21,10 @@ let make = (~client) => {
         Js.log(error);
         <div> {ReasonReact.string("Error")} </div>;
       | Data(data) =>
-        let online_users =
-          data##online_users->Belt.Array.keepMap(x => x##user);
-        let onlineUsers = Array.map(u => <UserItem user=u />, online_users);
-
+        let onlineUsers =
+          data##online_users->Belt.Array.keepMap(x => x##user)
+          |> Array.map(u => <UserItem user=u />);
+Js.log2("onlineUsers: ",onlineUsers);
         let onlineUsersTitle =
           "Online users - "
           ++ string_of_int(Array.length(data##online_users));
